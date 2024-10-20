@@ -1,0 +1,48 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import { siteInfo } from '@globals/site-info';
+import NavBar from '@components/shered/NavBar.astro';
+
+interface Props {
+	title?: string;
+    image?: string;
+    description?: string;
+}
+
+const { 
+    title = siteInfo.title, 
+    description = siteInfo.description,
+    image
+}: Props = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Isaac Hdez Castro" />
+
+    <!-- OG Meta Tags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <title>{title}</title>
+
+    <ViewTransitions/>
+     <!-- <style>
+        @view-transition {
+            navigation: auto;
+        }
+     </style> -->
+</head>
+<body class="bg-slate-800 text-slate-100 flex flex-col min-h-screen">
+    <NavBar></NavBar>
+    <main class="mt-10 mx-auto flex-grow w-full max-w-5xl px-4">
+        <slot/>
+    </main>
+</body>
+</html>

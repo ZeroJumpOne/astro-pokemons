@@ -1,0 +1,93 @@
+---
+// Código Server Side Only - Momento de construcción
+import MainLayout from '../../layouts/MainLayout.astro';
+import Title from '@components/shered/Title.astro';
+
+import type { GetStaticPaths } from 'astro';
+import type { PokemonListResponse } from '../../interfaces/pokemon-list.response';
+import PokemonCard from '../../components/pokemons/PokemonCard.astro';
+import { createLanguageService } from 'typescript';
+
+const resp = await fetch('https://pokeapi.co/api/v2/pokemon');
+const data = await resp.json() as PokemonListResponse;
+// console.log(data);
+
+export const getStaticPaths = ( async({ paginate }) => {
+	const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+	const data = await resp.json() as PokemonListResponse;
+	const { results } = data;
+
+	return paginate(results, { pageSize: 20 });
+}) satisfies GetStaticPaths;
+
+const title = 'Pokémons | Home';
+const { page } = Astro.props;
+// console.log('Page control:', page);
+---
+
+<MainLayout title={title}>
+	<Title>Listado Paginado</Title>
+
+	<section
+		arial-label="Listado de Pokémons"
+		class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-4"
+	>
+
+		{
+			page.data.map(({name, url}) => (
+				<PokemonCard name={name} url={url} />
+			))
+		}
+
+	
+	</section>
+
+	<!-- Botones de paginación -->
+	<section class="flex p10 mt-10 gap-2 items-center">
+		<a class:list={[
+			'btn',
+			{
+				disabled: !page.url.prev
+			}
+		]} 
+		href={page.url.prev}>Anteriores</a>
+		<a class:list={[
+			'btn',
+			{
+				disabled: !page.url.next
+			}
+		]} 
+		href={page.url.next}>Siguientes</a>
+
+		<div class="flex flex-1">
+
+		</div>
+		<span class="text-xl font-bold">Página {page.currentPage}</span>
+	</section>
+
+
+</MainLayout>
+
+<style>
+	.btn {
+		@apply bg-blue-500 text-white px-4 py-2 rounded-md;
+	}
+
+	.disabled {
+		@apply bg-gray-500 text-gray-300;
+	}
+</style>
+
+<!-- 
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1 class="text-3xl text-blue-500">Astro</h1>
+	</body>
+</html> -->
