@@ -1,4 +1,5 @@
 # Astro Starter Kit: Minimal
+by M.Ing. Isaac Hdez Castro
 
 ```sh
 npm create astro@latest -- --template minimal
